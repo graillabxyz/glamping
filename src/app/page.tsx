@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { 
   Trees,
@@ -41,6 +43,12 @@ const formatIDR = (amount: number) => {
 export default function ProposalPage() {
   const [occupancy, setOccupancy] = useState(80);
   const [lang, setLang] = useState<Language>("id");
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const t = translations[lang];
 
@@ -107,16 +115,33 @@ export default function ProposalPage() {
     };
   }, [occupancy]);
 
+  if (!mounted) return null;
+
   return (
     <main className="min-h-screen cinematic-bg text-slate-800">
       {/* Language Toggle */}
-      <div className="fixed top-8 right-8 z-[100]">
+      <div className="fixed top-8 right-8 z-[100] flex gap-2">
         <button 
-          onClick={() => setLang(lang === "en" ? "id" : "en")}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all shadow-2xl"
+          onClick={() => setLang("en")}
+          className={cn(
+            "px-4 py-2 backdrop-blur-xl border rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-2xl",
+            lang === "en" 
+              ? "bg-white text-blue-600 border-white" 
+              : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+          )}
         >
-          <Languages className="w-4 h-4" />
-          {lang === "en" ? "Bahasa Indonesia" : "English"}
+          English
+        </button>
+        <button 
+          onClick={() => setLang("id")}
+          className={cn(
+            "px-4 py-2 backdrop-blur-xl border rounded-full text-[10px] font-bold uppercase tracking-widest transition-all shadow-2xl",
+            lang === "id" 
+              ? "bg-white text-blue-600 border-white" 
+              : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+          )}
+        >
+          Bahasa
         </button>
       </div>
 
@@ -136,19 +161,31 @@ export default function ProposalPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            <div className="flex justify-center mb-8">
-              <div className="w-24 h-24 bg-white/10 backdrop-blur-xl rounded-[2rem] p-5 border border-white/20 shadow-2xl">
-                <Image src="/images/logo.png" alt="Hortensia Field Logo" width={96} height={96} className="w-full h-full object-contain" />
+            <div className="flex justify-center mb-10">
+              <div className="relative group">
+                {/* Premium Logo Frame */}
+                <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/20 to-emerald-500/20 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+                <div className="relative w-28 h-28 bg-white/5 backdrop-blur-3xl rounded-[2.2rem] p-6 border border-white/20 shadow-[0_0_50px_-12px_rgba(255,255,255,0.2)] flex items-center justify-center overflow-hidden">
+                   {/* Subtle animated inner glow */}
+                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-30" />
+                   <Image 
+                    src="/images/logo.png" 
+                    alt="Hortensia Field Logo" 
+                    width={100} 
+                    height={100} 
+                    className="w-full h-full object-contain relative z-10 filter drop-shadow-2xl" 
+                   />
+                </div>
               </div>
             </div>
-            <span className="inline-block px-5 py-2 mb-8 text-xs font-bold tracking-[0.2em] uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+            <span className="inline-block px-5 py-2 mb-8 text-[10px] font-black tracking-[0.3em] uppercase bg-blue-500/20 backdrop-blur-md rounded-full border border-blue-400/30 text-blue-100">
               {t.hero.proposal}
             </span>
-            <h1 className="text-5xl md:text-8xl font-bold mb-8 leading-[1.1] drop-shadow-2xl">
+            <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[1] drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
               {t.hero.title1} <br />
-              <span className="text-blue-100/90 font-light italic">{t.hero.title2}</span>
+              <span className="text-blue-200/90 font-light italic tracking-tight">{t.hero.title2}</span>
             </h1>
-            <p className="text-lg md:text-2xl text-white/80 mb-14 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-lg">
+            <p className="text-lg md:text-2xl text-white/70 mb-16 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-lg">
               {t.hero.subtitle}
             </p>
             
@@ -157,19 +194,19 @@ export default function ProposalPage() {
                 const icons = [Tent, Users, Leaf];
                 const Icon = icons[i];
                 return (
-                  <div key={i} className="flex flex-col items-center p-8 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl transition-transform hover:scale-105">
-                    <Icon className="w-8 h-8 mb-4 text-blue-200" />
+                  <div key={i} className="flex flex-col items-center p-8 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl transition-all hover:bg-white/10 hover:scale-105 group">
+                    <Icon className="w-8 h-8 mb-4 text-blue-300 group-hover:text-blue-200 transition-colors" />
                     <h3 className="font-bold text-lg mb-1">{item.title}</h3>
-                    <span className="text-white/50 text-sm">{item.sub}</span>
+                    <span className="text-white/40 text-sm group-hover:text-white/60">{item.sub}</span>
                   </div>
                 );
               })}
             </div>
           </motion.div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-50">
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t.hero.scroll}</span>
-          <div className="w-0.5 h-12 bg-gradient-to-b from-white to-transparent" />
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
+          <span className="text-[9px] uppercase tracking-[0.5em] font-black">{t.hero.scroll}</span>
+          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
         </div>
       </section>
 
@@ -184,8 +221,8 @@ export default function ProposalPage() {
           >
             <Trees className="w-4 h-4" /> {t.vision.tag}
           </motion.div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-10 text-slate-900">{t.vision.title}</h2>
-          <p className="text-xl text-slate-600 mb-16 leading-relaxed font-light">
+          <h2 className="text-4xl md:text-5xl font-bold mb-10 text-slate-900 leading-tight">{t.vision.title}</h2>
+          <p className="text-xl text-slate-500 mb-16 leading-relaxed font-light">
             {t.vision.description}
           </p>
           <div className="grid md:grid-cols-2 gap-8 text-left">
@@ -196,10 +233,10 @@ export default function ProposalPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm"
+                className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-blue-600" />
                 </div>
                 <span className="text-slate-700 font-medium">{text}</span>
               </motion.div>
@@ -214,28 +251,28 @@ export default function ProposalPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
               <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.investment.tag}</span>
-              <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-4">{t.investment.title}</h2>
-              <p className="text-slate-500">
+              <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-4 leading-tight">{t.investment.title}</h2>
+              <p className="text-slate-500 text-lg font-light">
                 {t.investment.description}
               </p>
             </div>
-            <div className="bg-white px-8 py-6 rounded-3xl border border-blue-100 shadow-xl text-center md:text-right">
-               <p className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-1">{t.investment.totalLabel}</p>
-               <p className="text-3xl font-black text-blue-600">{formatIDR(BUSINESS_CONFIG.stageOneInvestment)}</p>
+            <div className="bg-white px-10 py-8 rounded-[2.5rem] border border-blue-100 shadow-2xl text-center md:text-right">
+               <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-2">{t.investment.totalLabel}</p>
+               <p className="text-4xl font-black text-blue-600">{formatIDR(BUSINESS_CONFIG.stageOneInvestment)}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {INVESTMENT_ITEMS.map((item, i) => (
-              <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-bold text-slate-800 text-lg leading-tight">{(t.investment.items as any)[item.name] || item.name}</h3>
+              <div key={i} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-100 transition-all group">
+                <div className="flex justify-between items-start mb-6">
+                  <h3 className="font-bold text-slate-800 text-lg leading-tight group-hover:text-blue-600 transition-colors">{(t.investment.items as any)[item.name] || item.name}</h3>
                 </div>
                 <div className="flex justify-between items-end">
-                  <p className="text-sm text-slate-400">
+                  <p className="text-xs text-slate-400 font-medium">
                     {item.quantity > 1 ? `${item.quantity} ${t.investment.items.units} × ${formatIDR(item.costPerUnit)}` : t.investment.items["Lump sum"]}
                   </p>
-                  <span className="font-bold text-slate-900">{formatIDR(item.total)}</span>
+                  <span className="font-black text-slate-900">{formatIDR(item.total)}</span>
                 </div>
               </div>
             ))}
@@ -248,8 +285,8 @@ export default function ProposalPage() {
         <div className="grid lg:grid-cols-2 gap-20 items-start">
           <div>
             <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.operations.tag}</span>
-            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">{t.operations.title}</h2>
-            <p className="text-lg text-slate-600 mb-12 leading-relaxed">
+            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8 leading-tight">{t.operations.title}</h2>
+            <p className="text-xl text-slate-500 mb-12 leading-relaxed font-light">
               {t.operations.description}
             </p>
             
@@ -257,29 +294,29 @@ export default function ProposalPage() {
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3 mb-6">
                 <Hammer className="w-6 h-6 text-blue-600" /> {t.operations.fixedCostsTitle}
               </h3>
-              <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm">
                 {MONTHLY_COSTS_BREAKDOWN.map((item, i) => (
                   <div key={i} className={cn(
-                    "flex justify-between p-6",
+                    "flex justify-between p-7",
                     i !== MONTHLY_COSTS_BREAKDOWN.length - 1 && "border-b border-slate-50"
                   )}>
                     <span className="text-slate-600 font-medium">{(t.operations.fixedCostsItems as any)[item.name] || item.name}</span>
                     <span className="text-slate-900 font-bold">{formatIDR(item.cost)}</span>
                   </div>
                 ))}
-                <div className="bg-slate-900 text-white p-6 flex justify-between items-center">
-                  <span className="font-bold">{t.operations.totalFixedCosts}</span>
-                  <span className="text-xl font-black">{formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}</span>
+                <div className="bg-slate-900 text-white p-8 flex justify-between items-center">
+                  <span className="font-bold opacity-70">{t.operations.totalFixedCosts}</span>
+                  <span className="text-2xl font-black">{formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-50/50 p-10 rounded-[3rem] border border-blue-100">
-            <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-              <BadgePercent className="w-7 h-7 text-blue-600" /> {t.operations.waterfallTitle}
+          <div className="bg-blue-50/30 p-12 rounded-[3.5rem] border border-blue-100/50 backdrop-blur-sm">
+            <h3 className="text-2xl font-black text-slate-900 mb-10 flex items-center gap-3">
+              <BadgePercent className="w-8 h-8 text-blue-600" /> {t.operations.waterfallTitle}
             </h3>
-            <div className="space-y-10">
+            <div className="space-y-12">
               <WaterfallItem label={t.operations.waterfallItems.village.label} percent={BUSINESS_CONFIG.villageSharePercent * 100} color="bg-emerald-500" desc={t.operations.waterfallItems.village.desc} />
               <WaterfallItem label={t.operations.waterfallItems.investor.label} percent={BUSINESS_CONFIG.investorSharePercent * 100} color="bg-blue-600" desc={t.operations.waterfallItems.investor.desc} />
               <WaterfallItem label={t.operations.waterfallItems.marketing.label} percent={BUSINESS_CONFIG.marketingPercent * 100} color="bg-indigo-500" desc={t.operations.waterfallItems.marketing.desc} />
@@ -287,7 +324,7 @@ export default function ProposalPage() {
               <WaterfallItem label={t.operations.waterfallItems.operator.label} percent={Math.round((1 - (BUSINESS_CONFIG.villageSharePercent + BUSINESS_CONFIG.investorSharePercent + BUSINESS_CONFIG.marketingPercent + BUSINESS_CONFIG.restaurantReservePercent)) * 100)} color="bg-slate-700" desc={t.operations.waterfallItems.operator.desc} />
             </div>
             
-            <div className="mt-12 p-6 bg-white rounded-2xl border border-blue-100 flex items-start gap-4">
+            <div className="mt-14 p-7 bg-white rounded-3xl border border-blue-100 flex items-start gap-4 shadow-sm">
               <Info className="w-5 h-5 text-blue-600 mt-1 shrink-0" />
               <p className="text-sm text-slate-500 italic leading-relaxed">
                 {t.operations.note}
@@ -300,27 +337,27 @@ export default function ProposalPage() {
       {/* Interactive Calculator Section */}
       <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
         {/* Abstract background blobs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[140px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[140px] translate-y-1/2 -translate-x-1/2" />
 
         <div className="px-6 max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-20">
+          <div className="text-center mb-24">
             <span className="text-blue-400 font-bold uppercase tracking-widest text-xs">{t.calculator.tag}</span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-2">{t.calculator.title}</h2>
-            <p className="text-white/50 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-6xl font-black mb-6 mt-4 leading-tight">{t.calculator.title}</h2>
+            <p className="text-white/40 max-w-2xl mx-auto text-lg font-light">
               {t.calculator.description}
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-start">
+          <div className="grid lg:grid-cols-12 gap-16 items-start">
             {/* Control Panel */}
-            <div className="lg:col-span-5 bg-white/5 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 shadow-3xl">
-              <div className="mb-12">
-                <div className="flex justify-between items-end mb-8">
-                  <label className="text-lg font-medium text-white/90">{t.calculator.occupancyLabel}</label>
+            <div className="lg:col-span-5 bg-white/5 backdrop-blur-2xl p-12 rounded-[3.5rem] border border-white/10 shadow-3xl">
+              <div className="mb-14">
+                <div className="flex justify-between items-end mb-10">
+                  <label className="text-xl font-medium text-white/80">{t.calculator.occupancyLabel}</label>
                   <div className="text-right">
-                    <span className="text-5xl font-black text-blue-400">{occupancy}%</span>
-                    <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">{t.calculator.marketTarget}</p>
+                    <span className="text-6xl font-black text-blue-400 tabular-nums leading-none">{occupancy}%</span>
+                    <p className="text-[10px] uppercase tracking-widest text-white/30 font-bold mt-2">{t.calculator.marketTarget}</p>
                   </div>
                 </div>
                 <input
@@ -332,28 +369,32 @@ export default function ProposalPage() {
                   onChange={(e) => setOccupancy(parseInt(e.target.value))}
                   className="w-full h-3 bg-white/10 rounded-full appearance-none cursor-pointer accent-blue-400 hover:accent-blue-300 transition-all"
                 />
-                <div className="flex justify-between mt-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                <div className="flex justify-between mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">
                   <span>{t.calculator.conservative}</span>
                   <span>{t.calculator.optimal}</span>
                   <span>{t.calculator.maximum}</span>
                 </div>
               </div>
 
-              <div className="space-y-8">
-                <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex items-start gap-5">
-                  <TrendingUp className="w-6 h-6 text-blue-400 mt-1" />
+              <div className="space-y-10">
+                <div className="p-7 rounded-[2rem] bg-white/5 border border-white/5 flex items-start gap-6 group hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-6 h-6 text-blue-400" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-white/90 mb-1">{t.calculator.scalingTitle}</h4>
-                    <p className="text-sm text-white/50 leading-relaxed">
+                    <p className="text-sm text-white/40 leading-relaxed font-light">
                       {t.calculator.scalingDesc}
                     </p>
                   </div>
                 </div>
-                <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex items-start gap-5">
-                  <ArrowDownToLine className="w-6 h-6 text-emerald-400 mt-1" />
+                <div className="p-7 rounded-[2rem] bg-white/5 border border-white/5 flex items-start gap-6 group hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center shrink-0">
+                    <ArrowDownToLine className="w-6 h-6 text-emerald-400" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-white/90 mb-1">{t.calculator.bufferTitle}</h4>
-                    <p className="text-sm text-white/50 leading-relaxed">
+                    <p className="text-sm text-white/40 leading-relaxed font-light">
                       {t.calculator.bufferDesc}
                     </p>
                   </div>
@@ -366,22 +407,26 @@ export default function ProposalPage() {
               <AnimatePresence mode="wait">
                 {!financials.isProfitable ? (
                   <motion.div
+                    key="not-profitable"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="h-full bg-amber-500/10 border border-amber-500/20 p-16 rounded-[3rem] text-center flex flex-col items-center justify-center"
+                    className="h-full min-h-[500px] bg-amber-500/5 border border-amber-500/20 p-20 rounded-[3.5rem] text-center flex flex-col items-center justify-center backdrop-blur-sm"
                   >
-                    <Info className="w-16 h-16 text-amber-500 mb-6 opacity-50" />
-                    <h3 className="text-3xl font-bold text-amber-200 mb-4">{t.calculator.baselineNotMet}</h3>
-                    <p className="text-white/50 text-lg leading-relaxed max-w-sm">
+                    <div className="w-20 h-20 rounded-full bg-amber-500/10 flex items-center justify-center mb-8">
+                       <Info className="w-10 h-10 text-amber-500 opacity-60" />
+                    </div>
+                    <h3 className="text-4xl font-black text-amber-200 mb-6">{t.calculator.baselineNotMet}</h3>
+                    <p className="text-white/40 text-xl leading-relaxed max-w-sm font-light">
                       {t.calculator.baselineDesc(formatIDR(BUSINESS_CONFIG.fixedOperatingCosts))}
                     </p>
                   </motion.div>
                 ) : (
                   <motion.div 
+                    key="profitable"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="grid md:grid-cols-2 gap-6"
+                    className="grid md:grid-cols-2 gap-8"
                   >
                     <ResultCard
                       label={t.calculator.results.grossRevenue}
@@ -422,16 +467,18 @@ export default function ProposalPage() {
                     />
                     
                     {/* Timeline Results */}
-                    <div className="md:col-span-2 grid md:grid-cols-2 gap-6 mt-4">
-                       <div className="bg-white/10 p-10 rounded-[2.5rem] border border-white/10 shadow-xl">
-                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-blue-400 mb-4">{t.calculator.timeline.investorTitle}</p>
-                          <p className="text-5xl font-black text-white mb-2">{financials.investorRepaymentMonths}</p>
-                          <p className="text-sm text-white/40">{t.calculator.timeline.investorSub}</p>
+                    <div className="md:col-span-2 grid md:grid-cols-2 gap-8 mt-4">
+                       <div className="bg-white/10 p-12 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/20 transition-colors" />
+                          <p className="text-[10px] uppercase tracking-[0.3em] font-black text-blue-400 mb-6">{t.calculator.timeline.investorTitle}</p>
+                          <p className="text-6xl font-black text-white mb-3 tabular-nums">{financials.investorRepaymentMonths}</p>
+                          <p className="text-sm text-white/30 font-medium uppercase tracking-widest">{t.calculator.timeline.investorSub}</p>
                        </div>
-                       <div className="bg-white/10 p-10 rounded-[2.5rem] border border-white/10 shadow-xl">
-                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-amber-400 mb-4">{t.calculator.timeline.restoTitle}</p>
-                          <p className="text-5xl font-black text-white mb-2">{financials.restaurantFundingMonths}</p>
-                          <p className="text-sm text-white/40">{t.calculator.timeline.restoSub}</p>
+                       <div className="bg-white/10 p-12 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors" />
+                          <p className="text-[10px] uppercase tracking-[0.3em] font-black text-amber-400 mb-6">{t.calculator.timeline.restoTitle}</p>
+                          <p className="text-6xl font-black text-white mb-3 tabular-nums">{financials.restaurantFundingMonths}</p>
+                          <p className="text-sm text-white/30 font-medium uppercase tracking-widest">{t.calculator.timeline.restoSub}</p>
                        </div>
                     </div>
                   </motion.div>
@@ -444,32 +491,36 @@ export default function ProposalPage() {
 
       {/* Investor Structure Section */}
       <section className="py-32 px-6 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-20 items-center">
-          <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-3xl">
-             <Image src="/images/mockup.jpeg" alt="Investor vision" fill className="object-cover opacity-80" />
-             <div className="absolute inset-0 bg-blue-900/40" />
+        <div className="grid md:grid-cols-2 gap-24 items-center">
+          <div className="relative aspect-square rounded-[4rem] overflow-hidden shadow-3xl group">
+             <Image src="/images/mockup.jpeg" alt="Investor vision" fill className="object-cover opacity-60 scale-105 group-hover:scale-110 transition-transform duration-[3s]" />
+             <div className="absolute inset-0 bg-blue-900/60" />
              <div className="absolute inset-0 flex items-center justify-center p-12 text-center">
-                <div className="bg-white/10 backdrop-blur-md p-10 rounded-[2rem] border border-white/20">
-                   <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">{t.investor.targetLabel}</p>
-                   <p className="text-4xl font-black text-white">{formatIDR(BUSINESS_CONFIG.investorRepaymentTarget)}</p>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  className="bg-white/10 backdrop-blur-2xl p-12 rounded-[3rem] border border-white/20 shadow-3xl"
+                >
+                   <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em] mb-4">{t.investor.targetLabel}</p>
+                   <p className="text-5xl font-black text-white tabular-nums drop-shadow-2xl">{formatIDR(BUSINESS_CONFIG.investorRepaymentTarget)}</p>
+                </motion.div>
              </div>
           </div>
           <div>
             <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.investor.tag}</span>
-            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">{t.investor.title}</h2>
-            <p className="text-lg text-slate-600 mb-10 leading-relaxed font-light">
+            <h2 className="text-5xl font-black text-slate-900 mt-4 mb-10 leading-tight">{t.investor.title}</h2>
+            <p className="text-xl text-slate-500 mb-12 leading-relaxed font-light">
               {t.investor.description}
             </p>
-            <div className="space-y-6">
+            <div className="space-y-10">
                {t.investor.points.map((item, i) => (
-                 <div key={i} className="flex gap-5 items-start">
-                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-1 shrink-0">
-                       <div className="w-2 h-2 rounded-full bg-blue-600" />
+                 <div key={i} className="flex gap-6 items-start">
+                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center mt-1 shrink-0">
+                       <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
                     </div>
                     <div>
-                       <h4 className="font-bold text-slate-800 mb-1">{item.title}</h4>
-                       <p className="text-sm text-slate-500">{item.desc}</p>
+                       <h4 className="font-bold text-slate-800 text-lg mb-2">{item.title}</h4>
+                       <p className="text-slate-500 font-light leading-relaxed">{item.desc}</p>
                     </div>
                  </div>
                ))}
@@ -480,26 +531,31 @@ export default function ProposalPage() {
 
       {/* Stage 2 Expansion Section */}
       <section className="py-32 bg-slate-900 text-white overflow-hidden relative">
-        <Image src="/images/resto2.png" alt="Expansion vision" fill className="object-cover opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent" />
+        <Image src="/images/resto2.png" alt="Expansion vision" fill className="object-cover opacity-20 scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent" />
         
         <div className="px-6 max-w-6xl mx-auto relative z-10">
           <div className="max-w-2xl">
             <span className="text-amber-400 font-bold uppercase tracking-widest text-xs">{t.expansion.tag}</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-8">{t.expansion.title}</h2>
-            <p className="text-xl text-white/70 mb-12 leading-relaxed font-light">
+            <h2 className="text-5xl md:text-6xl font-black mt-4 mb-10 leading-tight">{t.expansion.title}</h2>
+            <p className="text-xl text-white/50 mb-16 leading-relaxed font-light max-w-xl">
               {t.expansion.description}
             </p>
             
-            <div className="grid md:grid-cols-2 gap-10">
+            <div className="grid md:grid-cols-2 gap-12">
               {t.expansion.cards.map((card, i) => {
                 const Icons = [Store, Calendar];
                 const Icon = Icons[i];
                 return (
-                  <div key={i} className="p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10">
-                    <Icon className="w-10 h-10 text-amber-400 mb-6" />
-                    <h4 className="text-xl font-bold mb-3">{card.title}</h4>
-                    <p className="text-sm text-white/50 leading-relaxed">
+                  <div key={i} className="p-10 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 group hover:bg-white/10 transition-all">
+                    <div className={cn(
+                      "w-16 h-16 rounded-2xl mb-8 flex items-center justify-center transition-transform group-hover:scale-110",
+                      i === 0 ? "bg-amber-500/20" : "bg-blue-500/20"
+                    )}>
+                      <Icon className={cn("w-8 h-8", i === 0 ? "text-amber-400" : "text-blue-400")} />
+                    </div>
+                    <h4 className="text-2xl font-bold mb-4">{card.title}</h4>
+                    <p className="text-white/40 leading-relaxed font-light">
                       {card.desc}
                     </p>
                   </div>
@@ -513,14 +569,14 @@ export default function ProposalPage() {
       {/* Scenario Cards */}
       <section className="py-32 bg-white">
         <div className="px-6 max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">{t.scenarios.title}</h2>
-            <p className="text-slate-500 max-w-2xl mx-auto italic font-light leading-relaxed">
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-black text-slate-900 mb-6 leading-tight">{t.scenarios.title}</h2>
+            <p className="text-slate-400 max-w-2xl mx-auto italic font-light text-lg leading-relaxed">
               {t.scenarios.description}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <ScenarioCard 
               occupancy={40}
               revenue={42240000}
@@ -571,32 +627,39 @@ export default function ProposalPage() {
       </section>
 
       {/* Closing Section */}
-      <section className="py-40 px-6 text-center max-w-4xl mx-auto relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] -z-10" />
-        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-12 shadow-2xl border border-blue-50">
+      <section className="py-48 px-6 text-center max-w-4xl mx-auto relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-50/50 rounded-full blur-[140px] -z-10" />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mx-auto mb-12 shadow-2xl border border-blue-50/50 rotate-12 hover:rotate-0 transition-transform duration-500"
+        >
           <ShieldCheck className="w-12 h-12 text-blue-600" />
-        </div>
-        <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-10 leading-tight">{t.closing?.title || t.hero.title1}</h2>
-        <p className="text-2xl text-slate-500 leading-relaxed font-light italic mb-16">
+        </motion.div>
+        <h2 className="text-5xl md:text-7xl font-black text-slate-900 mb-12 leading-tight">{t.closing?.title || t.hero.title1}</h2>
+        <p className="text-2xl md:text-3xl text-slate-400 leading-relaxed font-light italic mb-20 max-w-3xl mx-auto">
           "{t.hero.subtitle}"
         </p>
-        <div className="w-32 h-0.5 bg-blue-600/20 mx-auto" />
+        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-blue-600/20 to-transparent mx-auto" />
       </section>
 
       {/* Footer */}
-      <footer className="py-16 border-t border-slate-100 text-center bg-white">
-        <div className="px-6 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-           <div className="flex items-center gap-5 text-left">
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl p-3 border border-blue-100">
-                <Image src="/images/logo.png" alt="Logo" width={56} height={56} className="w-full h-full object-contain" />
+      <footer className="py-20 border-t border-slate-100 text-center bg-white relative z-10">
+        <div className="px-6 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+           <div className="flex items-center gap-6 text-left">
+              <div className="w-16 h-16 bg-blue-50 rounded-[1.5rem] p-4 border border-blue-100 shadow-inner">
+                <Image src="/images/logo.png" alt="Logo" width={64} height={64} className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="font-bold text-slate-900">Hortensia Field Glamping</p>
-                <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">{t.footer.location}</p>
+                <p className="font-black text-slate-900 text-xl tracking-tight">Hortensia Field Glamping</p>
+                <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.3em] font-black">{t.footer.location}</p>
               </div>
            </div>
-           <p className="text-slate-400 text-sm italic">{t.footer.tagline}</p>
-           <p className="text-slate-300 text-[10px] uppercase tracking-widest">&copy; {t.footer.copy}</p>
+           <p className="text-slate-400 text-base font-light italic max-w-xs">{t.footer.tagline}</p>
+           <div className="text-right">
+             <p className="text-slate-300 text-[10px] uppercase tracking-[0.4em] font-black">&copy; {t.footer.copy}</p>
+             <p className="text-[9px] text-blue-600 font-bold uppercase tracking-widest mt-2">Sustainable Partnership</p>
+           </div>
         </div>
       </footer>
     </main>
@@ -605,19 +668,20 @@ export default function ProposalPage() {
 
 function WaterfallItem({ label, percent, color, desc }: any) {
   return (
-    <div>
-      <div className="flex justify-between items-end mb-3">
+    <div className="group">
+      <div className="flex justify-between items-end mb-4">
         <div>
-          <h4 className="font-bold text-slate-900">{label}</h4>
-          <p className="text-xs text-slate-400">{desc}</p>
+          <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{label}</h4>
+          <p className="text-sm text-slate-400 font-light">{desc}</p>
         </div>
-        <span className="text-lg font-black text-slate-900">{percent}%</span>
+        <span className="text-2xl font-black text-slate-900 tabular-nums">{percent}%</span>
       </div>
-      <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+      <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
         <motion.div 
           initial={{ width: 0 }}
           whileInView={{ width: `${percent}%` }}
           viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
           className={cn("h-full", color)}
         />
       </div>
@@ -639,20 +703,21 @@ function ResultCard({ label, value, subLabel, color, highlight = false }: any) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
       className={cn(
-        "p-8 rounded-[2.5rem] border transition-all duration-500",
+        "p-10 rounded-[3rem] border transition-all duration-500",
         highlight 
-          ? "bg-white text-slate-900 border-white shadow-3xl scale-105 z-10" 
-          : "bg-white/5 text-white border-white/10"
+          ? "bg-white text-slate-900 border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] scale-105 z-10" 
+          : "bg-white/5 text-white border-white/10 hover:bg-white/10 hover:border-white/20"
       )}
     >
-      <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-4 opacity-50", !highlight && colors[color])}>
+      <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60", !highlight && colors[color])}>
         {label}
       </p>
-      <p className={cn("text-3xl font-black mb-1", highlight ? "text-slate-900" : "text-white")}>
+      <p className={cn("text-4xl font-black mb-2 tabular-nums", highlight ? "text-slate-900" : "text-white")}>
         {value}
       </p>
-      <p className={cn("text-xs opacity-40 font-medium", highlight ? "text-slate-500" : "text-white/40")}>
+      <p className={cn("text-xs opacity-30 font-bold uppercase tracking-widest", highlight ? "text-slate-400" : "text-white/30")}>
         {subLabel}
       </p>
     </motion.div>
@@ -662,23 +727,23 @@ function ResultCard({ label, value, subLabel, color, highlight = false }: any) {
 function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve, profit, timeline, label, featured = false, t }: any) {
   return (
     <div className={cn(
-      "p-10 rounded-[3rem] border transition-all duration-500 flex flex-col h-full",
+      "p-12 rounded-[3.5rem] border transition-all duration-700 flex flex-col h-full group hover:shadow-2xl",
       featured 
         ? "bg-blue-600 border-blue-400 shadow-3xl lg:-mt-8 lg:-mb-8 relative z-10 text-white" 
-        : "bg-white border-slate-100 shadow-sm text-slate-900"
+        : "bg-white border-slate-100 shadow-sm text-slate-900 hover:border-blue-100 hover:scale-105"
     )}>
-      <div className="mb-10">
+      <div className="mb-12">
         <span className={cn(
-          "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em]",
+          "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em]",
           featured ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
         )}>
           {label}
         </span>
-        <h3 className="text-5xl font-black mt-6 tracking-tighter">{occupancy}%</h3>
-        <p className={cn("text-xs uppercase tracking-widest font-bold mt-1", featured ? "text-white/60" : "text-slate-400")}>{t.scenarios.labels.occupancy}</p>
+        <h3 className="text-6xl font-black mt-10 tracking-tighter tabular-nums">{occupancy}%</h3>
+        <p className={cn("text-[10px] uppercase tracking-[0.3em] font-black mt-2", featured ? "text-white/40" : "text-slate-300")}>{t.scenarios.labels.occupancy}</p>
       </div>
 
-      <div className="space-y-5 mb-10 flex-grow">
+      <div className="space-y-6 mb-12 flex-grow">
         <ScenarioItem label={t.scenarios.labels.grossRevenue} value={formatIDR(revenue)} light={featured} />
         <ScenarioItem label={t.scenarios.labels.villageShare} value={formatIDR(villageShare)} light={featured} highlight />
         <ScenarioItem label={t.scenarios.labels.investorRepay} value={formatIDR(investorShare)} light={featured} />
@@ -686,11 +751,11 @@ function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve
       </div>
 
       <div className={cn(
-        "pt-8 border-t",
-        featured ? "border-white/20" : "border-slate-100"
+        "pt-10 border-t",
+        featured ? "border-white/10" : "border-slate-50"
       )}>
-        <p className={cn("text-[10px] uppercase tracking-widest font-black mb-3", featured ? "text-white/50" : "text-slate-300")}>{t.scenarios.labels.repaymentSpeed}</p>
-        <p className="text-4xl font-black">{timeline} <span className="text-sm font-light opacity-60 tracking-normal">{t.scenarios.labels.months}</span></p>
+        <p className={cn("text-[10px] uppercase tracking-[0.3em] font-black mb-4", featured ? "text-white/30" : "text-slate-200")}>{t.scenarios.labels.repaymentSpeed}</p>
+        <p className="text-5xl font-black tabular-nums">{timeline} <span className="text-sm font-light opacity-50 tracking-normal ml-1">{t.scenarios.labels.months}</span></p>
       </div>
     </div>
   );
@@ -699,10 +764,10 @@ function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve
 function ScenarioItem({ label, value, light, highlight }: any) {
   return (
     <div className="flex justify-between items-center text-sm">
-      <span className={cn("font-medium", light ? "text-white/60" : "text-slate-400")}>{label}</span>
+      <span className={cn("font-medium", light ? "text-white/40" : "text-slate-400")}>{label}</span>
       <span className={cn(
-        "font-black tracking-tight",
-        highlight ? (light ? "text-white" : "text-emerald-600") : ""
+        "font-black tracking-tight tabular-nums",
+        highlight ? (light ? "text-white" : "text-emerald-600") : (light ? "text-white/90" : "text-slate-900")
       )}>{value}</span>
     </div>
   );
