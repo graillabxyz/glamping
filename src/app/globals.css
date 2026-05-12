@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest-900: #1a2f1a;
+  --color-forest-800: #2a4d2a;
+  --color-forest-700: #3a6b3a;
+  --color-earth-900: #3c2f2f;
+  --color-earth-800: #5d4037;
+  --color-earth-700: #795548;
+  --color-hydrangea-100: #e3f2fd;
+  --color-hydrangea-500: #64b5f6;
+}
+
+:root {
+  --background: #fdfaf6;
+  --foreground: #2d3436;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.natural-gradient {
+  background: linear-gradient(135deg, #fdfaf6 0%, #f5efe6 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.rock-bg {
+  background-image: url('/images/rock1.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.rock-overlay {
+  background: rgba(45, 52, 54, 0.85);
+}
+
+.hero-overlay {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-break-inside-avoid {
+    break-inside: avoid;
+  }
+}
