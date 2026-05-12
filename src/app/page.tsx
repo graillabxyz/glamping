@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { 
@@ -18,10 +16,12 @@ import {
   ArrowDownToLine,
   Hammer,
   BadgePercent,
-  CheckCircle2
+  CheckCircle2,
+  Languages
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BUSINESS_CONFIG, INVESTMENT_ITEMS, MONTHLY_COSTS_BREAKDOWN, EXPANSION_PLAN } from "@/lib/constants";
+import { translations, type Language } from "@/lib/translations";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -40,6 +40,9 @@ const formatIDR = (amount: number) => {
 
 export default function ProposalPage() {
   const [occupancy, setOccupancy] = useState(80);
+  const [lang, setLang] = useState<Language>("id");
+
+  const t = translations[lang];
 
   const financials = useMemo(() => {
     const { 
@@ -106,6 +109,17 @@ export default function ProposalPage() {
 
   return (
     <main className="min-h-screen cinematic-bg text-slate-800">
+      {/* Language Toggle */}
+      <div className="fixed top-8 right-8 z-[100]">
+        <button 
+          onClick={() => setLang(lang === "en" ? "id" : "en")}
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all shadow-2xl"
+        >
+          <Languages className="w-4 h-4" />
+          {lang === "en" ? "Bahasa Indonesia" : "English"}
+        </button>
+      </div>
+
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <Image
@@ -128,33 +142,33 @@ export default function ProposalPage() {
               </div>
             </div>
             <span className="inline-block px-5 py-2 mb-8 text-xs font-bold tracking-[0.2em] uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-              Sustainable Partnership Proposal
+              {t.hero.proposal}
             </span>
             <h1 className="text-5xl md:text-8xl font-bold mb-8 leading-[1.1] drop-shadow-2xl">
-              Hortensia Field <br />
-              <span className="text-blue-100/90 font-light italic">Glamping Village</span>
+              {t.hero.title1} <br />
+              <span className="text-blue-100/90 font-light italic">{t.hero.title2}</span>
             </h1>
             <p className="text-lg md:text-2xl text-white/80 mb-14 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-lg">
-              A low-impact mountain retreat designed to create sustainable tourism, local employment, investor repayment, and long-term village income.
+              {t.hero.subtitle}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { icon: Tent, title: "4 Boutique Yurts", sub: "Low-impact design" },
-                { icon: Users, title: "Village Partnership", sub: "Shared monthly success" },
-                { icon: Leaf, title: "Eco-Conscious", sub: "Preserving landscape" }
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center p-8 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl transition-transform hover:scale-105">
-                  <item.icon className="w-8 h-8 mb-4 text-blue-200" />
-                  <h3 className="font-bold text-lg mb-1">{item.title}</h3>
-                  <span className="text-white/50 text-sm">{item.sub}</span>
-                </div>
-              ))}
+              {t.hero.features.map((item, i) => {
+                const icons = [Tent, Users, Leaf];
+                const Icon = icons[i];
+                return (
+                  <div key={i} className="flex flex-col items-center p-8 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl transition-transform hover:scale-105">
+                    <Icon className="w-8 h-8 mb-4 text-blue-200" />
+                    <h3 className="font-bold text-lg mb-1">{item.title}</h3>
+                    <span className="text-white/50 text-sm">{item.sub}</span>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-50">
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll to Explore</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t.hero.scroll}</span>
           <div className="w-0.5 h-12 bg-gradient-to-b from-white to-transparent" />
         </div>
       </section>
@@ -168,23 +182,14 @@ export default function ProposalPage() {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 mb-6 text-blue-600 font-bold uppercase tracking-widest text-xs"
           >
-            <Trees className="w-4 h-4" /> The Vision
+            <Trees className="w-4 h-4" /> {t.vision.tag}
           </motion.div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-10 text-slate-900">A Respectful Partnership</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-10 text-slate-900">{t.vision.title}</h2>
           <p className="text-xl text-slate-600 mb-16 leading-relaxed font-light">
-            Our vision is to transform the existing hydrangea field into a premium yet sustainable glamping destination. By building on wooden platforms, we ensure the natural beauty of the field remains protected and untouched, creating a bridge between modern comfort and village heritage.
+            {t.vision.description}
           </p>
           <div className="grid md:grid-cols-2 gap-8 text-left">
-            {[
-              "Preserving the hydrangea field",
-              "Low-impact construction",
-              "Community land partnership",
-              "Sustainable local tourism",
-              "Shared benefit structure",
-              "Long-term village income",
-              "Natural mountain atmosphere",
-              "100% Local staff employment"
-            ].map((text, i) => (
+            {t.vision.points.map((text, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
@@ -208,14 +213,14 @@ export default function ProposalPage() {
         <div className="px-6 max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
-              <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">Phased Development</span>
-              <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-4">Stage 1 Investment Breakdown</h2>
+              <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.investment.tag}</span>
+              <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-4">{t.investment.title}</h2>
               <p className="text-slate-500">
-                A clear, itemized breakdown of the initial capital required to launch the glamping operation.
+                {t.investment.description}
               </p>
             </div>
             <div className="bg-white px-8 py-6 rounded-3xl border border-blue-100 shadow-xl text-center md:text-right">
-               <p className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-1">Total Initial Investment</p>
+               <p className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-1">{t.investment.totalLabel}</p>
                <p className="text-3xl font-black text-blue-600">{formatIDR(BUSINESS_CONFIG.stageOneInvestment)}</p>
             </div>
           </div>
@@ -224,11 +229,11 @@ export default function ProposalPage() {
             {INVESTMENT_ITEMS.map((item, i) => (
               <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-bold text-slate-800 text-lg leading-tight">{item.name}</h3>
+                  <h3 className="font-bold text-slate-800 text-lg leading-tight">{(t.investment.items as any)[item.name] || item.name}</h3>
                 </div>
                 <div className="flex justify-between items-end">
                   <p className="text-sm text-slate-400">
-                    {item.quantity > 1 ? `${item.quantity} units × ${formatIDR(item.costPerUnit)}` : "Lump sum"}
+                    {item.quantity > 1 ? `${item.quantity} ${t.investment.items.units} × ${formatIDR(item.costPerUnit)}` : t.investment.items["Lump sum"]}
                   </p>
                   <span className="font-bold text-slate-900">{formatIDR(item.total)}</span>
                 </div>
@@ -242,15 +247,15 @@ export default function ProposalPage() {
       <section className="py-32 px-6 max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-20 items-start">
           <div>
-            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">Sustainable Growth</span>
-            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">Monthly Operations & Distribution</h2>
+            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.operations.tag}</span>
+            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">{t.operations.title}</h2>
             <p className="text-lg text-slate-600 mb-12 leading-relaxed">
-              Our business model ensures that all partners benefit directly from the retreat's performance. After fixed operating costs are met, the remaining profit follows a transparent "waterfall" distribution.
+              {t.operations.description}
             </p>
             
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-3 mb-6">
-                <Hammer className="w-6 h-6 text-blue-600" /> Fixed Operating Costs
+                <Hammer className="w-6 h-6 text-blue-600" /> {t.operations.fixedCostsTitle}
               </h3>
               <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
                 {MONTHLY_COSTS_BREAKDOWN.map((item, i) => (
@@ -258,12 +263,12 @@ export default function ProposalPage() {
                     "flex justify-between p-6",
                     i !== MONTHLY_COSTS_BREAKDOWN.length - 1 && "border-b border-slate-50"
                   )}>
-                    <span className="text-slate-600 font-medium">{item.name}</span>
+                    <span className="text-slate-600 font-medium">{(t.operations.fixedCostsItems as any)[item.name] || item.name}</span>
                     <span className="text-slate-900 font-bold">{formatIDR(item.cost)}</span>
                   </div>
                 ))}
                 <div className="bg-slate-900 text-white p-6 flex justify-between items-center">
-                  <span className="font-bold">Total Monthly Fixed Costs</span>
+                  <span className="font-bold">{t.operations.totalFixedCosts}</span>
                   <span className="text-xl font-black">{formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}</span>
                 </div>
               </div>
@@ -272,20 +277,20 @@ export default function ProposalPage() {
 
           <div className="bg-blue-50/50 p-10 rounded-[3rem] border border-blue-100">
             <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-              <BadgePercent className="w-7 h-7 text-blue-600" /> Profit Waterfall Model
+              <BadgePercent className="w-7 h-7 text-blue-600" /> {t.operations.waterfallTitle}
             </h3>
             <div className="space-y-10">
-              <WaterfallItem label="Village Share" percent={BUSINESS_CONFIG.villageSharePercent * 100} color="bg-emerald-500" desc="Direct community monthly benefit" />
-              <WaterfallItem label="Investor Repayment" percent={BUSINESS_CONFIG.investorSharePercent * 100} color="bg-blue-600" desc="Temporary share until 115% ROI reached" />
-              <WaterfallItem label="Marketing Budget" percent={BUSINESS_CONFIG.marketingPercent * 100} color="bg-indigo-500" desc="Generating new guest bookings" />
-              <WaterfallItem label="Stage 2 Reserve" percent={BUSINESS_CONFIG.restaurantReservePercent * 100} color="bg-amber-500" desc="Funding the future restaurant expansion" />
-              <WaterfallItem label="Operator Profit" percent={Math.round((1 - (BUSINESS_CONFIG.villageSharePercent + BUSINESS_CONFIG.investorSharePercent + BUSINESS_CONFIG.marketingPercent + BUSINESS_CONFIG.restaurantReservePercent)) * 100)} color="bg-slate-700" desc="Remaining share for management" />
+              <WaterfallItem label={t.operations.waterfallItems.village.label} percent={BUSINESS_CONFIG.villageSharePercent * 100} color="bg-emerald-500" desc={t.operations.waterfallItems.village.desc} />
+              <WaterfallItem label={t.operations.waterfallItems.investor.label} percent={BUSINESS_CONFIG.investorSharePercent * 100} color="bg-blue-600" desc={t.operations.waterfallItems.investor.desc} />
+              <WaterfallItem label={t.operations.waterfallItems.marketing.label} percent={BUSINESS_CONFIG.marketingPercent * 100} color="bg-indigo-500" desc={t.operations.waterfallItems.marketing.desc} />
+              <WaterfallItem label={t.operations.waterfallItems.resto.label} percent={BUSINESS_CONFIG.restaurantReservePercent * 100} color="bg-amber-500" desc={t.operations.waterfallItems.resto.desc} />
+              <WaterfallItem label={t.operations.waterfallItems.operator.label} percent={Math.round((1 - (BUSINESS_CONFIG.villageSharePercent + BUSINESS_CONFIG.investorSharePercent + BUSINESS_CONFIG.marketingPercent + BUSINESS_CONFIG.restaurantReservePercent)) * 100)} color="bg-slate-700" desc={t.operations.waterfallItems.operator.desc} />
             </div>
             
             <div className="mt-12 p-6 bg-white rounded-2xl border border-blue-100 flex items-start gap-4">
               <Info className="w-5 h-5 text-blue-600 mt-1 shrink-0" />
               <p className="text-sm text-slate-500 italic leading-relaxed">
-                Allocations are calculated as a percentage of "Profit Before Distributions" (Revenue minus Operating Costs).
+                {t.operations.note}
               </p>
             </div>
           </div>
@@ -300,10 +305,10 @@ export default function ProposalPage() {
 
         <div className="px-6 max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-20">
-            <span className="text-blue-400 font-bold uppercase tracking-widest text-xs">Transparency Tool</span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-2">Interactive Performance Calculator</h2>
+            <span className="text-blue-400 font-bold uppercase tracking-widest text-xs">{t.calculator.tag}</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 mt-2">{t.calculator.title}</h2>
             <p className="text-white/50 max-w-2xl mx-auto">
-              Adjust the occupancy rate to visualize the dynamic impact on partner distributions and repayment timelines.
+              {t.calculator.description}
             </p>
           </div>
 
@@ -312,10 +317,10 @@ export default function ProposalPage() {
             <div className="lg:col-span-5 bg-white/5 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 shadow-3xl">
               <div className="mb-12">
                 <div className="flex justify-between items-end mb-8">
-                  <label className="text-lg font-medium text-white/90">Occupancy Rate</label>
+                  <label className="text-lg font-medium text-white/90">{t.calculator.occupancyLabel}</label>
                   <div className="text-right">
                     <span className="text-5xl font-black text-blue-400">{occupancy}%</span>
-                    <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">Market Target (80%)</p>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">{t.calculator.marketTarget}</p>
                   </div>
                 </div>
                 <input
@@ -328,9 +333,9 @@ export default function ProposalPage() {
                   className="w-full h-3 bg-white/10 rounded-full appearance-none cursor-pointer accent-blue-400 hover:accent-blue-300 transition-all"
                 />
                 <div className="flex justify-between mt-6 text-[10px] font-bold uppercase tracking-widest text-white/30">
-                  <span>Conservative</span>
-                  <span>Optimal</span>
-                  <span>Maximum</span>
+                  <span>{t.calculator.conservative}</span>
+                  <span>{t.calculator.optimal}</span>
+                  <span>{t.calculator.maximum}</span>
                 </div>
               </div>
 
@@ -338,18 +343,18 @@ export default function ProposalPage() {
                 <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex items-start gap-5">
                   <TrendingUp className="w-6 h-6 text-blue-400 mt-1" />
                   <div>
-                    <h4 className="font-bold text-white/90 mb-1">Scaling Success</h4>
+                    <h4 className="font-bold text-white/90 mb-1">{t.calculator.scalingTitle}</h4>
                     <p className="text-sm text-white/50 leading-relaxed">
-                      Distributions grow linearly as occupancy increases, ensuring everyone wins together.
+                      {t.calculator.scalingDesc}
                     </p>
                   </div>
                 </div>
                 <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex items-start gap-5">
                   <ArrowDownToLine className="w-6 h-6 text-emerald-400 mt-1" />
                   <div>
-                    <h4 className="font-bold text-white/90 mb-1">Fixed Cost Buffer</h4>
+                    <h4 className="font-bold text-white/90 mb-1">{t.calculator.bufferTitle}</h4>
                     <p className="text-sm text-white/50 leading-relaxed">
-                      Costs remain fixed at {formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}, creating high leverage as revenue climbs.
+                      {t.calculator.bufferDesc}
                     </p>
                   </div>
                 </div>
@@ -367,9 +372,9 @@ export default function ProposalPage() {
                     className="h-full bg-amber-500/10 border border-amber-500/20 p-16 rounded-[3rem] text-center flex flex-col items-center justify-center"
                   >
                     <Info className="w-16 h-16 text-amber-500 mb-6 opacity-50" />
-                    <h3 className="text-3xl font-bold text-amber-200 mb-4">Baseline Not Met</h3>
+                    <h3 className="text-3xl font-bold text-amber-200 mb-4">{t.calculator.baselineNotMet}</h3>
                     <p className="text-white/50 text-lg leading-relaxed max-w-sm">
-                      Occupancy must be high enough to cover the monthly fixed costs of {formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}.
+                      {t.calculator.baselineDesc(formatIDR(BUSINESS_CONFIG.fixedOperatingCosts))}
                     </p>
                   </motion.div>
                 ) : (
@@ -379,54 +384,54 @@ export default function ProposalPage() {
                     className="grid md:grid-cols-2 gap-6"
                   >
                     <ResultCard
-                      label="Gross Room Revenue"
+                      label={t.calculator.results.grossRevenue}
                       value={formatIDR(financials.grossRoomRevenue)}
-                      subLabel="Monthly Total"
+                      subLabel={t.calculator.results.monthlyTotal}
                       color="blue"
                     />
                     <ResultCard
-                      label="Village Monthly Share"
+                      label={t.calculator.results.villageShare}
                       value={formatIDR(financials.villageMonthlyShare)}
-                      subLabel="Community Benefit"
+                      subLabel={t.calculator.results.communityBenefit}
                       color="emerald"
                       highlight
                     />
                     <ResultCard
-                      label="Investor Share"
+                      label={t.calculator.results.investorShare}
                       value={formatIDR(financials.investorMonthlyRepayment)}
-                      subLabel="Target: 227.7M"
+                      subLabel={t.calculator.results.investorTarget}
                       color="indigo"
                     />
                     <ResultCard
-                      label="Restaurant Reserve"
+                      label={t.calculator.results.restoReserve}
                       value={formatIDR(financials.restaurantMonthlyReserve)}
-                      subLabel="Expansion Fund"
+                      subLabel={t.calculator.results.expansionFund}
                       color="amber"
                     />
                     <ResultCard
-                      label="Operator Profit"
+                      label={t.calculator.results.operatorProfit}
                       value={formatIDR(financials.operatorMonthlyProfit)}
-                      subLabel="Retained Earnings"
+                      subLabel={t.calculator.results.retainedEarnings}
                       color="slate"
                     />
                     <ResultCard
-                      label="Annual Village Share"
+                      label={t.calculator.results.annualVillage}
                       value={formatIDR(financials.annualVillageShare)}
-                      subLabel="12-Month Projection"
+                      subLabel={t.calculator.results.projection}
                       color="emerald"
                     />
                     
                     {/* Timeline Results */}
                     <div className="md:col-span-2 grid md:grid-cols-2 gap-6 mt-4">
                        <div className="bg-white/10 p-10 rounded-[2.5rem] border border-white/10 shadow-xl">
-                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-blue-400 mb-4">Investor Repayment</p>
+                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-blue-400 mb-4">{t.calculator.timeline.investorTitle}</p>
                           <p className="text-5xl font-black text-white mb-2">{financials.investorRepaymentMonths}</p>
-                          <p className="text-sm text-white/40">Months to 115% ROI</p>
+                          <p className="text-sm text-white/40">{t.calculator.timeline.investorSub}</p>
                        </div>
                        <div className="bg-white/10 p-10 rounded-[2.5rem] border border-white/10 shadow-xl">
-                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-amber-400 mb-4">Stage 2 Funding</p>
+                          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-amber-400 mb-4">{t.calculator.timeline.restoTitle}</p>
                           <p className="text-5xl font-black text-white mb-2">{financials.restaurantFundingMonths}</p>
-                          <p className="text-sm text-white/40">Months to Restaurant Fund</p>
+                          <p className="text-sm text-white/40">{t.calculator.timeline.restoSub}</p>
                        </div>
                     </div>
                   </motion.div>
@@ -445,24 +450,19 @@ export default function ProposalPage() {
              <div className="absolute inset-0 bg-blue-900/40" />
              <div className="absolute inset-0 flex items-center justify-center p-12 text-center">
                 <div className="bg-white/10 backdrop-blur-md p-10 rounded-[2rem] border border-white/20">
-                   <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Investor Repayment Target</p>
+                   <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">{t.investor.targetLabel}</p>
                    <p className="text-4xl font-black text-white">{formatIDR(BUSINESS_CONFIG.investorRepaymentTarget)}</p>
                 </div>
              </div>
           </div>
           <div>
-            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">Financial Model</span>
-            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">Investor Return Structure</h2>
+            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">{t.investor.tag}</span>
+            <h2 className="text-4xl font-bold text-slate-900 mt-2 mb-8">{t.investor.title}</h2>
             <p className="text-lg text-slate-600 mb-10 leading-relaxed font-light">
-              The investor receives a temporary share of operating profits until the original investment plus a 15% return bonus has been fully repaid. This structure ensures a clean exit for investors and long-term sustainability for the village.
+              {t.investor.description}
             </p>
             <div className="space-y-6">
-               {[
-                 { title: "No Permanent Equity", desc: "Project remains 100% locally controlled after exit." },
-                 { title: "115% Repayment Cap", desc: "Total repayment is capped at IDR 227.7M." },
-                 { title: "Direct Profit Share", desc: "Investor receives 25% of monthly operating profit." },
-                 { title: "Performance Based", desc: "Repayment speed scales with actual business success." }
-               ].map((item, i) => (
+               {t.investor.points.map((item, i) => (
                  <div key={i} className="flex gap-5 items-start">
                     <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-1 shrink-0">
                        <div className="w-2 h-2 rounded-full bg-blue-600" />
@@ -485,27 +485,26 @@ export default function ProposalPage() {
         
         <div className="px-6 max-w-6xl mx-auto relative z-10">
           <div className="max-w-2xl">
-            <span className="text-amber-400 font-bold uppercase tracking-widest text-xs">Phase 2 Strategy</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-8">Expansion: Forest Kitchen & Lounge</h2>
+            <span className="text-amber-400 font-bold uppercase tracking-widest text-xs">{t.expansion.tag}</span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-8">{t.expansion.title}</h2>
             <p className="text-xl text-white/70 mb-12 leading-relaxed font-light">
-              Once the initial project is proven successful, we will activate Stage 2. This communal dining space will enhance the guest experience and provide a second revenue stream for the village.
+              {t.expansion.description}
             </p>
             
             <div className="grid md:grid-cols-2 gap-10">
-              <div className="p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10">
-                 <Store className="w-10 h-10 text-amber-400 mb-6" />
-                 <h4 className="text-xl font-bold mb-3">Funding from Profit</h4>
-                 <p className="text-sm text-white/50 leading-relaxed">
-                   Stage 2 is funded entirely from the 10% monthly reserve, removing any immediate construction risk for partners.
-                 </p>
-              </div>
-              <div className="p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10">
-                 <Calendar className="w-10 h-10 text-blue-400 mb-6" />
-                 <h4 className="text-xl font-bold mb-3">Timeline Trigger</h4>
-                 <p className="text-sm text-white/50 leading-relaxed">
-                   Construction begins as soon as the IDR 85,000,000 reserve target is reached through operational success.
-                 </p>
-              </div>
+              {t.expansion.cards.map((card, i) => {
+                const Icons = [Store, Calendar];
+                const Icon = Icons[i];
+                return (
+                  <div key={i} className="p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10">
+                    <Icon className="w-10 h-10 text-amber-400 mb-6" />
+                    <h4 className="text-xl font-bold mb-3">{card.title}</h4>
+                    <p className="text-sm text-white/50 leading-relaxed">
+                      {card.desc}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -515,9 +514,9 @@ export default function ProposalPage() {
       <section className="py-32 bg-white">
         <div className="px-6 max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Performance Scenarios</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">{t.scenarios.title}</h2>
             <p className="text-slate-500 max-w-2xl mx-auto italic font-light leading-relaxed">
-              "We believe in presenting realistic projections. Here is how the project performs under different market conditions."
+              {t.scenarios.description}
             </p>
           </div>
 
@@ -530,7 +529,8 @@ export default function ProposalPage() {
               reserve={2374000}
               profit={10445600}
               timeline={38.4}
-              label="Conservative"
+              label={t.scenarios.labels.conservative}
+              t={t}
             />
             <ScenarioCard 
               occupancy={60}
@@ -540,7 +540,8 @@ export default function ProposalPage() {
               reserve={4486000}
               profit={19738400}
               timeline={20.3}
-              label="Moderate"
+              label={t.scenarios.labels.moderate}
+              t={t}
             />
             <ScenarioCard 
               occupancy={80}
@@ -550,8 +551,9 @@ export default function ProposalPage() {
               reserve={6598000}
               profit={29031200}
               timeline={13.8}
-              label="Market Target"
+              label={t.scenarios.labels.marketTarget}
               featured
+              t={t}
             />
             <ScenarioCard 
               occupancy={100}
@@ -561,7 +563,8 @@ export default function ProposalPage() {
               reserve={8710000}
               profit={38324000}
               timeline={10.5}
-              label="Maximum"
+              label={t.scenarios.labels.maximum}
+              t={t}
             />
           </div>
         </div>
@@ -573,9 +576,9 @@ export default function ProposalPage() {
         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-12 shadow-2xl border border-blue-50">
           <ShieldCheck className="w-12 h-12 text-blue-600" />
         </div>
-        <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-10 leading-tight">Building a Sustainable Future Together</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-10 leading-tight">{t.closing?.title || t.hero.title1}</h2>
         <p className="text-2xl text-slate-500 leading-relaxed font-light italic mb-16">
-          "This proposal is designed to create a sustainable tourism partnership where the village, investors, operators, and environment all benefit together."
+          "{t.hero.subtitle}"
         </p>
         <div className="w-32 h-0.5 bg-blue-600/20 mx-auto" />
       </section>
@@ -589,11 +592,11 @@ export default function ProposalPage() {
               </div>
               <div>
                 <p className="font-bold text-slate-900">Hortensia Field Glamping</p>
-                <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">Local Village Partnership &middot; Bali</p>
+                <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">{t.footer.location}</p>
               </div>
            </div>
-           <p className="text-slate-400 text-sm italic">Designed for community prosperity and landscape preservation.</p>
-           <p className="text-slate-300 text-[10px] uppercase tracking-widest">&copy; 2026 Proposal &middot; All Rights Reserved</p>
+           <p className="text-slate-400 text-sm italic">{t.footer.tagline}</p>
+           <p className="text-slate-300 text-[10px] uppercase tracking-widest">&copy; {t.footer.copy}</p>
         </div>
       </footer>
     </main>
@@ -656,7 +659,7 @@ function ResultCard({ label, value, subLabel, color, highlight = false }: any) {
   );
 }
 
-function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve, profit, timeline, label, featured = false }: any) {
+function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve, profit, timeline, label, featured = false, t }: any) {
   return (
     <div className={cn(
       "p-10 rounded-[3rem] border transition-all duration-500 flex flex-col h-full",
@@ -672,22 +675,22 @@ function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve
           {label}
         </span>
         <h3 className="text-5xl font-black mt-6 tracking-tighter">{occupancy}%</h3>
-        <p className={cn("text-xs uppercase tracking-widest font-bold mt-1", featured ? "text-white/60" : "text-slate-400")}>Occupancy</p>
+        <p className={cn("text-xs uppercase tracking-widest font-bold mt-1", featured ? "text-white/60" : "text-slate-400")}>{t.scenarios.labels.occupancy}</p>
       </div>
 
       <div className="space-y-5 mb-10 flex-grow">
-        <ScenarioItem label="Gross Revenue" value={formatIDR(revenue)} light={featured} />
-        <ScenarioItem label="Village Share" value={formatIDR(villageShare)} light={featured} highlight />
-        <ScenarioItem label="Investor Repay" value={formatIDR(investorShare)} light={featured} />
-        <ScenarioItem label="Resto Reserve" value={formatIDR(reserve)} light={featured} />
+        <ScenarioItem label={t.scenarios.labels.grossRevenue} value={formatIDR(revenue)} light={featured} />
+        <ScenarioItem label={t.scenarios.labels.villageShare} value={formatIDR(villageShare)} light={featured} highlight />
+        <ScenarioItem label={t.scenarios.labels.investorRepay} value={formatIDR(investorShare)} light={featured} />
+        <ScenarioItem label={t.scenarios.labels.restoReserve} value={formatIDR(reserve)} light={featured} />
       </div>
 
       <div className={cn(
         "pt-8 border-t",
         featured ? "border-white/20" : "border-slate-100"
       )}>
-        <p className={cn("text-[10px] uppercase tracking-widest font-black mb-3", featured ? "text-white/50" : "text-slate-300")}>Repayment Speed</p>
-        <p className="text-4xl font-black">{timeline} <span className="text-sm font-light opacity-60 tracking-normal">Months</span></p>
+        <p className={cn("text-[10px] uppercase tracking-widest font-black mb-3", featured ? "text-white/50" : "text-slate-300")}>{t.scenarios.labels.repaymentSpeed}</p>
+        <p className="text-4xl font-black">{timeline} <span className="text-sm font-light opacity-60 tracking-normal">{t.scenarios.labels.months}</span></p>
       </div>
     </div>
   );
