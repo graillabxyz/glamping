@@ -480,7 +480,7 @@ export default function ProposalPage() {
 
       {/* Stage 2 Expansion Section */}
       <section className="py-32 bg-slate-900 text-white overflow-hidden relative">
-        <Image src="/images/resto1.png" alt="Expansion vision" fill className="object-cover opacity-20" />
+        <Image src="/images/resto2.png" alt="Expansion vision" fill className="object-cover opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent" />
         
         <div className="px-6 max-w-6xl mx-auto relative z-10">
