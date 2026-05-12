@@ -17,38 +17,84 @@
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--background);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cinematic-bg {
+  background: #fdfdfd;
+  background: radial-gradient(circle at 50% 50%, #fdfdfd 0%, #f5f7f5 100%);
 }
 
 .natural-gradient {
-  background: linear-gradient(135deg, #fdfaf6 0%, #f5efe6 100%);
+  background: linear-gradient(to bottom, #fdfdfd, #f5f7f5);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .rock-bg {
+  position: relative;
+  background-color: #0d120d;
   background-image: url('/images/rock1.jpg');
   background-size: cover;
   background-attachment: fixed;
 }
 
 .rock-overlay {
-  background: rgba(45, 52, 54, 0.85);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(13, 18, 13, 0.95) 0%, rgba(26, 31, 26, 0.85) 100%);
 }
 
 .hero-overlay {
   background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
 }
 
+/* Custom Range Input Styling */
+input[type='range'] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  margin-top: -10px;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  border: 3px solid white;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
 @media print {
   .no-print {
     display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    padding: 2rem 0 !important;
   }
   .print-break-inside-avoid {
     break-inside: avoid;

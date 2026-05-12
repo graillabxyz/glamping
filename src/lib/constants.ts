@@ -1,10 +1,20 @@
 export const BUSINESS_CONFIG = {
   numberOfYurts: 4,
-  nightlyRate: 600000,
+  nightlyRate: 880000,
   daysPerMonth: 30,
   fixedOperatingCosts: 18500000,
-  villageSharePercent: 0.256,
-  initialInvestment: 198000000,
+  
+  // Profit Distribution Percentages (of operating profit)
+  villageSharePercent: 0.16,
+  investorSharePercent: 0.25,
+  marketingPercent: 0.05,
+  restaurantReservePercent: 0.10,
+  
+  // Investment Totals
+  stageOneInvestment: 198000000,
+  investorReturnBonus: 0.15,
+  investorRepaymentTarget: 227700000, // 198M * 1.15
+  restaurantCost: 85000000,
 };
 
 export const INVESTMENT_ITEMS = [
@@ -28,7 +38,7 @@ export const MONTHLY_COSTS_BREAKDOWN = [
 
 export const EXPANSION_PLAN = {
   title: "Phase 2: Forest Kitchen & Lounge",
-  description: "Planned for once the initial project is stable (target: 12 months). This 8x8m wooden structure with a simple central kitchen will serve local organic food to guests and visitors, increasing village revenue.",
-  timeline: "Month 12 - 18",
+  description: "Planned for once the initial project is stable. This 8x8m wooden structure with a simple central kitchen will serve local organic food to guests and visitors, funded entirely from operational success.",
+  timeline: "Funded via 10% reserve allocation",
   estimatedCost: 85000000,
 };
