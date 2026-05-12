@@ -122,6 +122,11 @@ export default function ProposalPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
           >
+            <div className="flex justify-center mb-8">
+              <div className="w-24 h-24 bg-white/10 backdrop-blur-xl rounded-[2rem] p-5 border border-white/20 shadow-2xl">
+                <Image src="/images/logo.png" alt="Hortensia Field Logo" width={96} height={96} className="w-full h-full object-contain" />
+              </div>
+            </div>
             <span className="inline-block px-5 py-2 mb-8 text-xs font-bold tracking-[0.2em] uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20">
               Sustainable Partnership Proposal
             </span>
@@ -578,9 +583,14 @@ export default function ProposalPage() {
       {/* Footer */}
       <footer className="py-16 border-t border-slate-100 text-center bg-white">
         <div className="px-6 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-           <div className="text-left">
-              <p className="font-bold text-slate-900">Hortensia Field Glamping</p>
-              <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">Local Village Partnership &middot; Bali</p>
+           <div className="flex items-center gap-5 text-left">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl p-3 border border-blue-100">
+                <Image src="/images/logo.png" alt="Logo" width={56} height={56} className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-900">Hortensia Field Glamping</p>
+                <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">Local Village Partnership &middot; Bali</p>
+              </div>
            </div>
            <p className="text-slate-400 text-sm italic">Designed for community prosperity and landscape preservation.</p>
            <p className="text-slate-300 text-[10px] uppercase tracking-widest">&copy; 2026 Proposal &middot; All Rights Reserved</p>
