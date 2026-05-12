@@ -40,6 +40,19 @@ const formatIDR = (amount: number) => {
   }).format(amount);
 };
 
+const formatCompact = (amount: number, lang: Language) => {
+  if (amount >= 1000000) {
+    const value = amount / 1000000;
+    // For values >= 1M, show decimals if needed
+    const formattedValue = new Intl.NumberFormat(lang === "id" ? "id-ID" : "en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
+    return `${lang === "id" ? "Rp " : "Rp "}${formattedValue}${lang === "id" ? " jt" : " M"}`;
+  }
+  return formatIDR(amount);
+};
+
 export default function ProposalPage() {
   const [occupancy, setOccupancy] = useState(80);
   const [lang, setLang] = useState<Language>("id");
@@ -258,7 +271,7 @@ export default function ProposalPage() {
             </div>
             <div className="bg-white px-10 py-8 rounded-[2.5rem] border border-blue-100 shadow-2xl text-center md:text-right">
                <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-2">{t.investment.totalLabel}</p>
-               <p className="text-4xl font-black text-blue-600">{formatIDR(BUSINESS_CONFIG.stageOneInvestment)}</p>
+               <p className="text-4xl font-black text-blue-600">{formatCompact(BUSINESS_CONFIG.stageOneInvestment, lang)}</p>
             </div>
           </div>
 
@@ -270,9 +283,9 @@ export default function ProposalPage() {
                 </div>
                 <div className="flex justify-between items-end">
                   <p className="text-xs text-slate-400 font-medium">
-                    {item.quantity > 1 ? `${item.quantity} ${t.investment.items.units} × ${formatIDR(item.costPerUnit)}` : t.investment.items["Lump sum"]}
+                    {item.quantity > 1 ? `${item.quantity} ${t.investment.items.units} × ${formatCompact(item.costPerUnit, lang)}` : t.investment.items["Lump sum"]}
                   </p>
-                  <span className="font-black text-slate-900">{formatIDR(item.total)}</span>
+                  <span className="font-black text-slate-900">{formatCompact(item.total, lang)}</span>
                 </div>
               </div>
             ))}
@@ -301,12 +314,12 @@ export default function ProposalPage() {
                     i !== MONTHLY_COSTS_BREAKDOWN.length - 1 && "border-b border-slate-50"
                   )}>
                     <span className="text-slate-600 font-medium">{(t.operations.fixedCostsItems as any)[item.name] || item.name}</span>
-                    <span className="text-slate-900 font-bold">{formatIDR(item.cost)}</span>
+                    <span className="text-slate-900 font-bold">{formatCompact(item.cost, lang)}</span>
                   </div>
                 ))}
                 <div className="bg-slate-900 text-white p-8 flex justify-between items-center">
                   <span className="font-bold opacity-70">{t.operations.totalFixedCosts}</span>
-                  <span className="text-2xl font-black">{formatIDR(BUSINESS_CONFIG.fixedOperatingCosts)}</span>
+                  <span className="text-2xl font-black">{formatCompact(BUSINESS_CONFIG.fixedOperatingCosts, lang)}</span>
                 </div>
               </div>
             </div>
@@ -430,38 +443,38 @@ export default function ProposalPage() {
                   >
                     <ResultCard
                       label={t.calculator.results.grossRevenue}
-                      value={formatIDR(financials.grossRoomRevenue)}
+                      value={formatCompact(financials.grossRoomRevenue, lang)}
                       subLabel={t.calculator.results.monthlyTotal}
                       color="blue"
                     />
                     <ResultCard
                       label={t.calculator.results.villageShare}
-                      value={formatIDR(financials.villageMonthlyShare)}
+                      value={formatCompact(financials.villageMonthlyShare, lang)}
                       subLabel={t.calculator.results.communityBenefit}
                       color="emerald"
                       highlight
                     />
                     <ResultCard
                       label={t.calculator.results.investorShare}
-                      value={formatIDR(financials.investorMonthlyRepayment)}
+                      value={formatCompact(financials.investorMonthlyRepayment, lang)}
                       subLabel={t.calculator.results.investorTarget}
                       color="indigo"
                     />
                     <ResultCard
                       label={t.calculator.results.restoReserve}
-                      value={formatIDR(financials.restaurantMonthlyReserve)}
+                      value={formatCompact(financials.restaurantMonthlyReserve, lang)}
                       subLabel={t.calculator.results.expansionFund}
                       color="amber"
                     />
                     <ResultCard
                       label={t.calculator.results.operatorProfit}
-                      value={formatIDR(financials.operatorMonthlyProfit)}
+                      value={formatCompact(financials.operatorMonthlyProfit, lang)}
                       subLabel={t.calculator.results.retainedEarnings}
                       color="slate"
                     />
                     <ResultCard
                       label={t.calculator.results.annualVillage}
-                      value={formatIDR(financials.annualVillageShare)}
+                      value={formatCompact(financials.annualVillageShare, lang)}
                       subLabel={t.calculator.results.projection}
                       color="emerald"
                     />
@@ -495,14 +508,14 @@ export default function ProposalPage() {
           <div className="relative aspect-square rounded-[4rem] overflow-hidden shadow-3xl group">
              <Image src="/images/mockup.jpeg" alt="Investor vision" fill className="object-cover opacity-60 scale-105 group-hover:scale-110 transition-transform duration-[3s]" />
              <div className="absolute inset-0 bg-blue-900/60" />
-             <div className="absolute inset-0 flex items-center justify-center p-12 text-center">
+             <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  className="bg-white/10 backdrop-blur-2xl p-12 rounded-[3rem] border border-white/20 shadow-3xl"
+                  className="bg-white/10 backdrop-blur-2xl p-8 md:p-12 rounded-[3rem] border border-white/20 shadow-3xl w-full max-w-[90%]"
                 >
                    <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em] mb-4">{t.investor.targetLabel}</p>
-                   <p className="text-5xl font-black text-white tabular-nums drop-shadow-2xl">{formatIDR(BUSINESS_CONFIG.investorRepaymentTarget)}</p>
+                   <p className="text-3xl md:text-5xl font-black text-white tabular-nums drop-shadow-2xl break-words">{formatCompact(BUSINESS_CONFIG.investorRepaymentTarget, lang)}</p>
                 </motion.div>
              </div>
           </div>
@@ -587,6 +600,7 @@ export default function ProposalPage() {
               timeline={38.4}
               label={t.scenarios.labels.conservative}
               t={t}
+              lang={lang}
             />
             <ScenarioCard 
               occupancy={60}
@@ -598,6 +612,7 @@ export default function ProposalPage() {
               timeline={20.3}
               label={t.scenarios.labels.moderate}
               t={t}
+              lang={lang}
             />
             <ScenarioCard 
               occupancy={80}
@@ -610,6 +625,7 @@ export default function ProposalPage() {
               label={t.scenarios.labels.marketTarget}
               featured
               t={t}
+              lang={lang}
             />
             <ScenarioCard 
               occupancy={100}
@@ -621,6 +637,7 @@ export default function ProposalPage() {
               timeline={10.5}
               label={t.scenarios.labels.maximum}
               t={t}
+              lang={lang}
             />
           </div>
         </div>
@@ -705,57 +722,57 @@ function ResultCard({ label, value, subLabel, color, highlight = false }: any) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       className={cn(
-        "p-10 rounded-[3rem] border transition-all duration-500",
+        "p-8 md:p-10 rounded-[3rem] border transition-all duration-500 min-h-[180px] flex flex-col justify-center",
         highlight 
           ? "bg-white text-slate-900 border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] scale-105 z-10" 
           : "bg-white/5 text-white border-white/10 hover:bg-white/10 hover:border-white/20"
       )}
     >
-      <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60", !highlight && colors[color])}>
+      <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-60", !highlight && colors[color])}>
         {label}
       </p>
-      <p className={cn("text-4xl font-black mb-2 tabular-nums", highlight ? "text-slate-900" : "text-white")}>
+      <p className={cn("text-2xl md:text-3xl font-black mb-2 tabular-nums break-words leading-tight", highlight ? "text-slate-900" : "text-white")}>
         {value}
       </p>
-      <p className={cn("text-xs opacity-30 font-bold uppercase tracking-widest", highlight ? "text-slate-400" : "text-white/30")}>
+      <p className={cn("text-[10px] opacity-30 font-bold uppercase tracking-widest", highlight ? "text-slate-400" : "text-white/30")}>
         {subLabel}
       </p>
     </motion.div>
   );
 }
 
-function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve, profit, timeline, label, featured = false, t }: any) {
+function ScenarioCard({ occupancy, revenue, villageShare, investorShare, reserve, profit, timeline, label, featured = false, t, lang }: any) {
   return (
     <div className={cn(
-      "p-12 rounded-[3.5rem] border transition-all duration-700 flex flex-col h-full group hover:shadow-2xl",
+      "p-8 md:p-12 rounded-[3.5rem] border transition-all duration-700 flex flex-col h-full group hover:shadow-2xl",
       featured 
         ? "bg-blue-600 border-blue-400 shadow-3xl lg:-mt-8 lg:-mb-8 relative z-10 text-white" 
         : "bg-white border-slate-100 shadow-sm text-slate-900 hover:border-blue-100 hover:scale-105"
     )}>
-      <div className="mb-12">
+      <div className="mb-10">
         <span className={cn(
           "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em]",
           featured ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
         )}>
           {label}
         </span>
-        <h3 className="text-6xl font-black mt-10 tracking-tighter tabular-nums">{occupancy}%</h3>
+        <h3 className="text-5xl md:text-6xl font-black mt-10 tracking-tighter tabular-nums">{occupancy}%</h3>
         <p className={cn("text-[10px] uppercase tracking-[0.3em] font-black mt-2", featured ? "text-white/40" : "text-slate-300")}>{t.scenarios.labels.occupancy}</p>
       </div>
 
-      <div className="space-y-6 mb-12 flex-grow">
-        <ScenarioItem label={t.scenarios.labels.grossRevenue} value={formatIDR(revenue)} light={featured} />
-        <ScenarioItem label={t.scenarios.labels.villageShare} value={formatIDR(villageShare)} light={featured} highlight />
-        <ScenarioItem label={t.scenarios.labels.investorRepay} value={formatIDR(investorShare)} light={featured} />
-        <ScenarioItem label={t.scenarios.labels.restoReserve} value={formatIDR(reserve)} light={featured} />
+      <div className="space-y-4 mb-10 flex-grow">
+        <ScenarioItem label={t.scenarios.labels.grossRevenue} value={formatCompact(revenue, lang)} light={featured} />
+        <ScenarioItem label={t.scenarios.labels.villageShare} value={formatCompact(villageShare, lang)} light={featured} highlight />
+        <ScenarioItem label={t.scenarios.labels.investorRepay} value={formatCompact(investorShare, lang)} light={featured} />
+        <ScenarioItem label={t.scenarios.labels.restoReserve} value={formatCompact(reserve, lang)} light={featured} />
       </div>
 
       <div className={cn(
-        "pt-10 border-t",
+        "pt-8 border-t",
         featured ? "border-white/10" : "border-slate-50"
       )}>
         <p className={cn("text-[10px] uppercase tracking-[0.3em] font-black mb-4", featured ? "text-white/30" : "text-slate-200")}>{t.scenarios.labels.repaymentSpeed}</p>
-        <p className="text-5xl font-black tabular-nums">{timeline} <span className="text-sm font-light opacity-50 tracking-normal ml-1">{t.scenarios.labels.months}</span></p>
+        <p className="text-4xl md:text-5xl font-black tabular-nums">{timeline} <span className="text-sm font-light opacity-50 tracking-normal ml-1">{t.scenarios.labels.months}</span></p>
       </div>
     </div>
   );
